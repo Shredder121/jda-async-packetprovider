@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
+
+	<name>Async JDA Packet Provider</name>
+
+	<inceptionYear>2017</inceptionYear>
+
+	<groupId>com.github.shredder121</groupId>
+	<artifactId>async-jda-packetprovider</artifactId>
+	<version>0.4-BUILD-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<organization>
+		<name>Shredder121</name>
+		<url>https://github.com/Shredder121</url>
+	</organization>
+
+	<scm>
+		<connection>scm:git:https://github.com/Shredder121/async-jda-packetprovider</connection>
+		<url>https://github.com/Shredder121/async-jda-packetprovider</url>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
+
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.dv8tion</groupId>
+			<artifactId>JDA</artifactId>
+			<version>3.1.1_217</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<!-- JDA Audio, experimental -->
+			<groupId>com.github.DV8FromTheWorld</groupId>
+			<artifactId>JDA-Audio</artifactId>
+			<version>454f43b090130d9f90c001fc69757766bbe46e62</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sedmelluq</groupId>
+			<artifactId>lavaplayer</artifactId>
+			<version>1.2.39</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.18</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>jcenter</id>
+			<name>jcenter-bintray</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
+		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+</project>
