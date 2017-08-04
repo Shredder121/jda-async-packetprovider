@@ -92,9 +92,8 @@ class AsyncPacketProvider implements IPacketProvider {
 		@Override
 		public void run() {
 			try {
-				DatagramPacket packet;
 				do {
-					packet = AsyncPacketProvider.this.packetProvider.getNextPacket(this.changeTalking);
+					DatagramPacket packet = AsyncPacketProvider.this.packetProvider.getNextPacket(this.changeTalking);
 					if (packet == null) {
 						 //actual value doesn't matter, as long as the thread gets taken out of scheduling
 						Thread.sleep(40);
