@@ -8,13 +8,13 @@
 		<version>9</version>
 	</parent>
 
-	<name>Async JDA Packet Provider</name>
+	<name>JDA Async Packet Provider</name>
 
 	<inceptionYear>2017</inceptionYear>
 
 	<groupId>com.github.shredder121</groupId>
-	<artifactId>async-jda-packetprovider</artifactId>
-	<version>0.5-BUILD-SNAPSHOT</version>
+	<artifactId>jda-async-packetprovider</artifactId>
+	<version>0.1-BUILD-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<organization>
@@ -23,14 +23,12 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:https://github.com/Shredder121/async-jda-packetprovider</connection>
-		<url>https://github.com/Shredder121/async-jda-packetprovider</url>
+		<connection>scm:git:https://github.com/Shredder121/jda-async-packetprovider</connection>
+		<url>https://github.com/Shredder121/jda-async-packetprovider</url>
 	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
 
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -62,6 +60,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.16.18</version>
+			<optional>true</optional>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -73,6 +72,7 @@
 			<url>http://jcenter.bintray.com</url>
 		</repository>
 		<repository>
+			<!-- to get the dependency on JDA-Audio -->
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
@@ -89,17 +89,4 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
 </project>
