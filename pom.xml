@@ -14,7 +14,7 @@
 
 	<groupId>com.github.shredder121</groupId>
 	<artifactId>jda-async-packetprovider</artifactId>
-	<version>0.1-BUILD-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<organization>
