@@ -98,7 +98,7 @@ class AsyncPacketProvider implements IPacketProvider {
 						 //actual value doesn't matter, as long as the thread gets taken out of scheduling
 						Thread.sleep(40);
 					} else if(!this.queue.offer(packet, 1, SECONDS) && !this.stopRequested) {
-						AsyncPacketProvider.log.warn("clock leap or something? Trying again.");
+						AsyncPacketProvider.log.debug("Clock leap or something? Trying again.");
 						if (!this.queue.offer(packet, 5, SECONDS) && !this.stopRequested) {
 							AsyncPacketProvider.log.warn("Missed a packet, queue is not being drained. Audio send system shutdown?");
 						}
