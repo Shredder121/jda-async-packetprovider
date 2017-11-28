@@ -22,6 +22,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.github.shredder121.asyncaudio.common.CommonAsync;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.experimental.NonFinal;
@@ -55,7 +57,8 @@ class AsyncPacketProvider implements IPacketProvider {
 		this.packetProvider = packetProvider;
 		this.backlog = backlog;
 		this.buddy = buddy.updateAndGet(__ -> this.new Buddy());
-		AsyncPacketProviderFactory.executor.execute(this.buddy);
+
+		CommonAsync.threadFactory.newThread(this.buddy).start();
 	}
 
 	@Override
