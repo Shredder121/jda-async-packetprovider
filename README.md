@@ -8,29 +8,12 @@ JDA PacketProvider that keeps a backlog of audio packets
 	<dependency>
 		<groupId>com.github.shredder121</groupId>
 		<artifactId>jda-async-packetprovider</artifactId>
-		<version>0.1-BUILD-SNAPSHOT</version>
+		<version>1.1</version>
 	</dependency>
 </dependencies>
 ```
-Currently the latest version is on Sonatype Snapshots:
 
-```xml
-<repositories>
-	<repository>
-		<id>sonatype-nexus-snapshots</id>
-		<name>Sonatype Nexus Snapshots</name>
-		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		<releases>
-			<enabled>false</enabled>
-		</releases>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-	</repository>
-</repositories>
-```
-
-You can also use the gradle equivalents of registering the repository, and declaring the dependency.
+You can also use the gradle equivalent of declaring the dependency.
 
 
 ## How to use

@@ -22,6 +22,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.github.shredder121.asyncaudio.common.CommonAsync;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.experimental.NonFinal;
@@ -55,7 +57,8 @@ class AsyncPacketProvider implements IPacketProvider {
 		this.packetProvider = packetProvider;
 		this.backlog = backlog;
 		this.buddy = buddy.updateAndGet(__ -> this.new Buddy());
-		AsyncPacketProviderFactory.executor.execute(this.buddy);
+
+		CommonAsync.threadFactory.newThread(this.buddy).start();
 	}
 
 	@Override
@@ -98,7 +101,7 @@ class AsyncPacketProvider implements IPacketProvider {
 						 //actual value doesn't matter, as long as the thread gets taken out of scheduling
 						Thread.sleep(40);
 					} else if(!this.queue.offer(packet, 1, SECONDS) && !this.stopRequested) {
-						AsyncPacketProvider.log.warn("clock leap or something? Trying again.");
+						AsyncPacketProvider.log.debug("Clock leap or something? Trying again.");
 						if (!this.queue.offer(packet, 5, SECONDS) && !this.stopRequested) {
 							AsyncPacketProvider.log.warn("Missed a packet, queue is not being drained. Audio send system shutdown?");
 						}

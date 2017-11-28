@@ -15,10 +15,9 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.github.shredder121.asyncaudio.common.CommonAsync;
 import com.github.shredder121.asyncaudio.jda.AsyncPacketProvider.Buddy;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ import net.dv8tion.jda.core.audio.factory.IPacketProvider;
  * An audio send factory that wraps an existing audio send factory, but keeps a backlog of packets ready.
  * <p>
  *
- * The backlog is customizable, default backlog is {@value #DEFAULT_BACKLOG}.
+ * The backlog is customizable, default backlog is {@value CommonAsync#DEFAULT_BACKLOG}.
  * <p>
  *
  * Keep in mind that having a bigger backlog means that when you do seeking, skipping, etc.
@@ -41,18 +40,14 @@ import net.dv8tion.jda.core.audio.factory.IPacketProvider;
 @RequiredArgsConstructor(staticName = "adapt")
 public class AsyncPacketProviderFactory implements IAudioSendFactory {
 
-	private static final int DEFAULT_BACKLOG = 20;
-
-	static final Executor executor = Executors.newCachedThreadPool();
-
 	/**
-	 * Wrap the given factory with the default backlog. ({@value #DEFAULT_BACKLOG})
+	 * Wrap the given factory with the default backlog. ({@value CommonAsync#DEFAULT_BACKLOG})
 	 *
 	 * @param factory the factory to be wrapped
 	 * @return
 	 */
 	public static AsyncPacketProviderFactory adapt(IAudioSendFactory factory) {
-		return AsyncPacketProviderFactory.adapt(factory, DEFAULT_BACKLOG);
+		return AsyncPacketProviderFactory.adapt(factory, CommonAsync.DEFAULT_BACKLOG);
 	}
 
 	/**
