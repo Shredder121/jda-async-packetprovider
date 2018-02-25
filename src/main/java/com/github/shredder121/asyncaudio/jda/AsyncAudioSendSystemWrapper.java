@@ -15,14 +15,13 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.github.shredder121.asyncaudio.jda.AsyncPacketProvider.Buddy;
 
 import net.dv8tion.jda.core.audio.factory.IAudioSendSystem;
 
 /**
- * A lifecycle manager for the buddy.
+ * A lifecycle manager for the taskRef.
  *
  * @author Shredder121
  */
@@ -31,7 +30,7 @@ class AsyncAudioSendSystemWrapper implements IAudioSendSystem {
 
 	IAudioSendSystem wrapped;
 
-	AtomicReference<Buddy> buddy;
+	AtomicReference<Future<?>> taskRef;
 
 	@Override
 	public void start() {
@@ -40,8 +39,8 @@ class AsyncAudioSendSystemWrapper implements IAudioSendSystem {
 
 	@Override
 	public void shutdown() {
-		this.buddy.updateAndGet(value -> {
-			value.stopRequested = true;
+		this.taskRef.updateAndGet(value -> {
+			value.cancel(true);
 			return null;
 		});
 		this.wrapped.shutdown();

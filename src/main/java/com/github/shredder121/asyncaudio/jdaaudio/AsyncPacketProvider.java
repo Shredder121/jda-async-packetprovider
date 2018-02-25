@@ -15,19 +15,17 @@
  */
 package com.github.shredder121.asyncaudio.jdaaudio;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import java.net.DatagramPacket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.shredder121.asyncaudio.common.CommonAsync;
+import com.github.shredder121.asyncaudio.common.ProvideForkJoinTask;
 
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
-import lombok.experimental.NonFinal;
-import lombok.experimental.PackagePrivate;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.audio.factory.IPacketProvider;
 
@@ -39,77 +37,35 @@ import net.dv8tion.jda.audio.factory.IPacketProvider;
 @Slf4j
 class AsyncPacketProvider implements IPacketProvider {
 
-	static AsyncPacketProvider wrap(IPacketProvider provider, int backlog, AtomicReference<Buddy> buddy) {
-		return new AsyncPacketProvider(provider, backlog, buddy);
+	static AsyncPacketProvider wrap(IPacketProvider provider, int backlog, AtomicReference<Future<?>> taskRef) {
+		return new AsyncPacketProvider(provider, backlog, taskRef);
 	}
 
-	@PackagePrivate
 	@Delegate(excludes = ActualProvide.class)
 	IPacketProvider packetProvider;
 
-	@PackagePrivate
-	int backlog;
+	BlockingQueue<DatagramPacket> queue;
 
-	@PackagePrivate
-	Buddy buddy;
+	AtomicBoolean talking = new AtomicBoolean();
 
-	private AsyncPacketProvider(IPacketProvider packetProvider, int backlog, AtomicReference<Buddy> buddy) {
+	private AsyncPacketProvider(IPacketProvider packetProvider, int backlog, AtomicReference<Future<?>> taskRef) {
 		this.packetProvider = packetProvider;
-		this.backlog = backlog;
-		this.buddy = buddy.updateAndGet(__ -> this.new Buddy());
+		this.queue = new ArrayBlockingQueue<>(backlog);
 
-		CommonAsync.threadFactory.newThread(this.buddy).start();
+		taskRef.updateAndGet(__ -> CommonAsync.workerPool.submit(new ProvideForkJoinTask(
+				() -> this.packetProvider.getNextPacket(this.talking.get()),
+				this.queue
+		)));
 	}
 
 	@Override
 	public DatagramPacket getNextPacket(boolean changeTalking) {
-		this.buddy.changeTalking = changeTalking;
-		return this.buddy.getPacket();
+		this.talking.set(changeTalking);
+		return this.queue.poll();
 	}
 
 	private interface ActualProvide {
 
 		DatagramPacket getNextPacket(boolean changeTalking);
-	}
-
-	@RequiredArgsConstructor
-	class Buddy implements Runnable {
-
-		@NonFinal
-		@PackagePrivate
-		volatile boolean stopRequested;
-
-		@NonFinal
-		@PackagePrivate
-		volatile boolean changeTalking;
-
-		BlockingQueue<DatagramPacket> queue = new ArrayBlockingQueue<>(
-				// keep a queue of this many packets ready
-				AsyncPacketProvider.this.backlog
-		);
-
-		DatagramPacket getPacket() {
-			return this.queue.poll();
-		}
-
-		@Override
-		public void run() {
-			try {
-				do {
-					DatagramPacket packet = AsyncPacketProvider.this.packetProvider.getNextPacket(this.changeTalking);
-					if (packet == null) {
-						 //actual value doesn't matter, as long as the thread gets taken out of scheduling
-						Thread.sleep(40);
-					} else if(!this.queue.offer(packet, 1, SECONDS) && !this.stopRequested) {
-						AsyncPacketProvider.log.debug("Clock leap or something? Trying again.");
-						if (!this.queue.offer(packet, 5, SECONDS) && !this.stopRequested) {
-							AsyncPacketProvider.log.warn("Missed a packet, queue is not being drained. Audio send system shutdown?");
-						}
-					}
-				} while (!this.stopRequested);
-			} catch (InterruptedException ex) {
-				Thread.currentThread().interrupt();
-			}
-		}
 	}
 }
