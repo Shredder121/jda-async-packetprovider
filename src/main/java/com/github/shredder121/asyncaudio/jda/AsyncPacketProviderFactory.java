@@ -15,10 +15,10 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.shredder121.asyncaudio.common.CommonAsync;
-import com.github.shredder121.asyncaudio.jda.AsyncPacketProvider.Buddy;
 
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.core.audio.factory.IAudioSendFactory;
@@ -62,13 +62,13 @@ public class AsyncPacketProviderFactory implements IAudioSendFactory {
 
 	@Override
 	public IAudioSendSystem createSendSystem(IPacketProvider packetProvider) {
-		// to be able to introduce the buddy to both parties
-		AtomicReference<Buddy> buddy = new AtomicReference<>();
+		// to be able to introduce the taskRef to both parties
+		AtomicReference<Future<?>> taskRef = new AtomicReference<>();
 
-		AsyncPacketProvider provider = AsyncPacketProvider.wrap(packetProvider, backlog, buddy);
+		AsyncPacketProvider provider = AsyncPacketProvider.wrap(packetProvider, backlog, taskRef);
 		AsyncAudioSendSystemWrapper system = AsyncAudioSendSystemWrapper.wrap(
 				this.factory.createSendSystem(provider),
-				buddy
+				taskRef
 		);
 		return system;
 	}
