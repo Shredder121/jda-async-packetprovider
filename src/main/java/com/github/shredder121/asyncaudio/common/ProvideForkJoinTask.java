@@ -25,7 +25,6 @@ public class ProvideForkJoinTask extends ForkJoinTask<DatagramPacket> {
 	 */
 	AtomicReference<DatagramPacket> packetRef = new AtomicReference<>();
 
-
 	@NonFinal //flag to stop
 	private volatile boolean stopRequested; //false
 
@@ -34,17 +33,17 @@ public class ProvideForkJoinTask extends ForkJoinTask<DatagramPacket> {
 		this.queue = queue;
 	}
 
-    @Override
-    protected boolean exec() {
+	@Override
+	protected boolean exec() {
 		DatagramPacket packet = this.packetRef.getAndSet(null);
 		if (this.stopRequested) {
 			return true;
 		} else if (packet == null) {
-			packet = this.provider.get();
+			packet = optionallyCopyData(this.provider.get());
 		}
 
-        if (packet == null || !this.queue.offer(packet)) {
-		    // offer failed, retry in next run
+		if (packet == null || !this.queue.offer(packet)) {
+			// offer failed, retry next run
 			this.packetRef.set(packet);
 			ForkJoinPool pool = getPool();
 			ForkJoinTask<?> me = this;
@@ -55,25 +54,42 @@ public class ProvideForkJoinTask extends ForkJoinTask<DatagramPacket> {
 			return false;
 		}
 
-        reinitialize();
+		reinitialize();
 		fork();
-        return false;
-    }
+		return false;
+	}
 
-    @Override
-    protected void setRawResult(DatagramPacket value) {
+	/**
+	 * Makes a copy of the data in the packet to make the packet safe to store for longer periods of time.
+	 *
+	 * <p>
+	 *   JDA changed to have only one backing array for all packets, to reduce allocations.
+	 *   This means that in JAPP code we have to copy the packet data before storing it for longer periods of time.
+	 * </p>
+	 *
+	 * @param packet the packet to copy the data for
+	 * @return the adjusted packet
+	 */
+	private static DatagramPacket optionallyCopyData(DatagramPacket packet) {
+		if (packet != null) {
+			packet.setData(packet.getData().clone(), packet.getOffset(), packet.getLength());
+		}
+		return packet;
+	}
+
+	@Override
+	protected void setRawResult(DatagramPacket value) {
 		throw new UnsupportedOperationException("Not needed.");
-    }
+	}
 
 	@Override
 	public DatagramPacket getRawResult() {
 		throw new UnsupportedOperationException("Not needed.");
 	}
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        this.stopRequested = true;
-        return super.cancel(mayInterruptIfRunning);
-    }
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		this.stopRequested = true;
+		return super.cancel(mayInterruptIfRunning);
+	}
 }
-
