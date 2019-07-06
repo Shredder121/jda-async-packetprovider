@@ -15,19 +15,18 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
+import com.github.shredder121.asyncaudio.common.CommonAsync;
+import com.github.shredder121.asyncaudio.common.ProvideForkJoinTask;
+import lombok.experimental.Delegate;
+import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.audio.factory.IPacketProvider;
+
 import java.net.DatagramPacket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.github.shredder121.asyncaudio.common.CommonAsync;
-import com.github.shredder121.asyncaudio.common.ProvideForkJoinTask;
-
-import lombok.experimental.Delegate;
-import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.core.audio.factory.IPacketProvider;
 
 /**
  * An adapter class that wraps an audio send handler to provide frame data in an async fashion.

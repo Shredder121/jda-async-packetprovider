@@ -40,15 +40,7 @@
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>3.1.1_217</version>
-			<optional>true</optional>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<!-- JDA Audio, experimental -->
-			<groupId>com.github.DV8FromTheWorld</groupId>
-			<artifactId>JDA-Audio</artifactId>
-			<version>454f43b090130d9f90c001fc69757766bbe46e62</version>
+			<version>4.BETA.0_20</version>
 			<optional>true</optional>
 			<scope>provided</scope>
 		</dependency>
@@ -58,6 +50,11 @@
 			<version>${lombok.version}</version>
 			<optional>true</optional>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
 		</dependency>
 	</dependencies>
 
@@ -151,11 +148,11 @@
 			<name>jcenter-bintray</name>
 			<url>http://jcenter.bintray.com</url>
 		</repository>
-		<repository>
-			<!-- to get the dependency on JDA-Audio -->
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
+<!--		<repository>-->
+<!--			&lt;!&ndash; to get the dependency on JDA-Audio &ndash;&gt;-->
+<!--			<id>jitpack.io</id>-->
+<!--			<url>https://jitpack.io</url>-->
+<!--		</repository>-->
 
 		<repository>
 			<id>sonatype-nexus-snapshots</id>
