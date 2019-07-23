@@ -15,15 +15,14 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
+import com.github.shredder121.asyncaudio.common.CommonAsync;
+import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.audio.factory.IAudioSendFactory;
+import net.dv8tion.jda.api.audio.factory.IAudioSendSystem;
+import net.dv8tion.jda.api.audio.factory.IPacketProvider;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.github.shredder121.asyncaudio.common.CommonAsync;
-
-import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.core.audio.factory.IAudioSendFactory;
-import net.dv8tion.jda.core.audio.factory.IAudioSendSystem;
-import net.dv8tion.jda.core.audio.factory.IPacketProvider;
 
 /**
  * An audio send factory that wraps an existing audio send factory, but keeps a backlog of packets ready.
