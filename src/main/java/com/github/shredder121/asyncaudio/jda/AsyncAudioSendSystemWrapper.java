@@ -15,10 +15,10 @@
  */
 package com.github.shredder121.asyncaudio.jda;
 
+import net.dv8tion.jda.api.audio.factory.IAudioSendSystem;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
-
-import net.dv8tion.jda.core.audio.factory.IAudioSendSystem;
 
 /**
  * A lifecycle manager for the taskRef.
