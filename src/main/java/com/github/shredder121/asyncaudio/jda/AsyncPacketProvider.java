@@ -21,7 +21,9 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audio.factory.IPacketProvider;
 
+import javax.annotation.Nullable;
 import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
@@ -43,7 +45,7 @@ class AsyncPacketProvider implements IPacketProvider {
 	@Delegate(excludes = ActualProvide.class)
 	IPacketProvider packetProvider;
 
-	BlockingQueue<DatagramPacket> queue;
+	BlockingQueue<ByteBuffer> queue;
 
 	AtomicBoolean talking = new AtomicBoolean();
 
@@ -52,19 +54,31 @@ class AsyncPacketProvider implements IPacketProvider {
 		this.queue = new ArrayBlockingQueue<>(backlog);
 
 		taskRef.updateAndGet(__ -> CommonAsync.workerPool.submit(new ProvideForkJoinTask(
-				() -> this.packetProvider.getNextPacket(this.talking.get()),
+				() -> this.packetProvider.getNextPacketRaw(this.talking.get()),
 				this.queue
 		)));
 	}
 
 	@Override
-	public DatagramPacket getNextPacket(boolean changeTalking) {
+	public ByteBuffer getNextPacketRaw(boolean changeTalking) {
 		this.talking.set(changeTalking);
 		return this.queue.poll();
 	}
 
-	private interface ActualProvide {
+	@Nullable
+	@Override
+	public DatagramPacket getNextPacket(boolean changeTalking) {
+		ByteBuffer buffer = getNextPacketRaw(changeTalking);
+		if (buffer == null)
+			return null;
+		byte[] data = buffer.array();
+		int offset = buffer.arrayOffset() + buffer.position();
+		int length = buffer.remaining();
+		return new DatagramPacket(data, offset, length, getSocketAddress());
+	}
 
+	private interface ActualProvide {
+		ByteBuffer getNextPacketRaw(boolean changeTalking);
 		DatagramPacket getNextPacket(boolean changeTalking);
 	}
 }
