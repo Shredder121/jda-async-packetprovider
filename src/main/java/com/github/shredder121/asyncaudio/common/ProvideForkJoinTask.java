@@ -1,6 +1,7 @@
 package com.github.shredder121.asyncaudio.common;
 
-import java.net.DatagramPacket;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -10,32 +11,32 @@ import java.util.function.Supplier;
 
 import lombok.experimental.NonFinal;
 
-public class ProvideForkJoinTask extends ForkJoinTask<DatagramPacket> {
+public class ProvideForkJoinTask extends ForkJoinTask<ByteBuffer> {
 
-	Supplier<DatagramPacket> provider;
-	BlockingQueue<DatagramPacket> queue;
+	Supplier<ByteBuffer> provider;
+	BlockingQueue<ByteBuffer> queue;
 
 	/**
-	 * A reference to a {@link DatagramPacket} that couldn't be offered.
+	 * A reference to a {@link ByteBuffer packet} that couldn't be offered.
 	 *
 	 * <p>
 	 *   Set to a non-null value when a round needs to be skipped.
 	 *   The packet will then be picked up on a subsequent run.
 	 * </p>
 	 */
-	AtomicReference<DatagramPacket> packetRef = new AtomicReference<>();
+	AtomicReference<ByteBuffer> packetRef = new AtomicReference<>();
 
 	@NonFinal //flag to stop
 	private volatile boolean stopRequested; //false
 
-	public ProvideForkJoinTask(Supplier<DatagramPacket> provider, BlockingQueue<DatagramPacket> queue) {
+	public ProvideForkJoinTask(Supplier<ByteBuffer> provider, BlockingQueue<ByteBuffer> queue) {
 		this.provider = provider;
 		this.queue = queue;
 	}
 
 	@Override
 	protected boolean exec() {
-		DatagramPacket packet = this.packetRef.getAndSet(null);
+		ByteBuffer packet = this.packetRef.getAndSet(null);
 		if (this.stopRequested) {
 			return true;
 		} else if (packet == null) {
@@ -70,20 +71,23 @@ public class ProvideForkJoinTask extends ForkJoinTask<DatagramPacket> {
 	 * @param packet the packet to copy the data for
 	 * @return the adjusted packet
 	 */
-	private static DatagramPacket optionallyCopyData(DatagramPacket packet) {
+	private static ByteBuffer optionallyCopyData(ByteBuffer packet) {
 		if (packet != null) {
-			packet.setData(packet.getData().clone(), packet.getOffset(), packet.getLength());
+			ByteBuffer buffer = ByteBuffer.allocate(packet.capacity());
+			buffer.put(packet);
+			((Buffer) buffer).flip();
+			return buffer;
 		}
-		return packet;
+		return null;
 	}
 
 	@Override
-	protected void setRawResult(DatagramPacket value) {
+	protected void setRawResult(ByteBuffer value) {
 		throw new UnsupportedOperationException("Not needed.");
 	}
 
 	@Override
-	public DatagramPacket getRawResult() {
+	public ByteBuffer getRawResult() {
 		throw new UnsupportedOperationException("Not needed.");
 	}
 

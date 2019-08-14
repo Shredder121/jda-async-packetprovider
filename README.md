@@ -8,7 +8,7 @@ JDA PacketProvider that keeps a backlog of audio packets
 	<dependency>
 		<groupId>com.github.shredder121</groupId>
 		<artifactId>jda-async-packetprovider</artifactId>
-		<version>1.3.1-MINN</version>
+		<version>1.3.2-MINN</version>
 	</dependency>
 </dependencies>
 ```
